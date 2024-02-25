@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wli-myapp-deployment
+  namespace: default
+  labels:
+    app: wli-myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wli-myapp
+  template:
+    metadata:
+      labels:
+        app: wli-myapp
+        azure.workload.identity/use: "true" 
+    spec:
+      serviceAccountName: sa-uaid-myapp
+      containers: 
+        - name: wli-myapp 
+          image: ghcr.io/makdeniz/wli-myapp:latest
+          imagePullPolicy: Always
+          envFrom:
+          - configMapRef:
+              name: "{{ .Release.Name }}-config"
