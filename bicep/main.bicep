@@ -1,7 +1,11 @@
-@description('Specifies the location for resources.')
-param location string = 'westeurope'
-
 targetScope = 'subscription'
+
+param location string = 'westeurope'
+param aks_name string
+param postgres_name string
+param adminUserName string
+param adminUserObjectId string
+param myIPAddressToBeWhitelisted string
 
 
 resource WorkloadIDentityResourceGroup 'Microsoft.Resources/resourceGroups@2023-07-01' = {
@@ -13,7 +17,7 @@ module aksCluster 'modules/aks.bicep' = {
   scope: WorkloadIDentityResourceGroup
   name: 'aks-deployment'
    params: {
-    aks_name: 'wli-aks'
+    aks_name: aks_name
    }
 }
 
@@ -22,10 +26,10 @@ module postgresQL 'modules/postgres.bicep' = {
   name: 'postgresql-deployment'
    params: {
     administratorLoginPassword: 'adminPassword:)'
-    whitelistedMyIP: '91.66.107.42'
-    postgres_name: 'wli-postgres'
-    adminUserName: 'murat@makdenizmsn.onmicrosoft.com'
-    adminUserObjectId: 'f3e57f22-4ce6-4177-8fad-9212925f7cc6'
+    whitelistedMyIP: myIPAddressToBeWhitelisted
+    postgres_name: postgres_name
+    adminUserName: adminUserName
+    adminUserObjectId: adminUserObjectId
     
    }
 }
